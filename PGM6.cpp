@@ -5,14 +5,23 @@
 #define outcode int
 #define true 1
 #define false 0
+double xmin, ymin, xmax, ymax;
+double xvmin, yvmin, xvmax, yvmax;
 
-double xmin = 50, ymin = 50, xmax = 100, ymax = 100;
-double xvmin = 200, yvmin = 200, xvmax = 300, yvmax = 300;
 
 const int RIGHT = 4;
 const int LEFT = 8;
 const int TOP = 1;
 const int BOTTOM = 2;
+
+int n;
+struct line_segment {
+	int x1;
+	int y1;
+	int x2;
+	int y2;
+};
+struct line_segment ls[10];
 
 outcode computeoutcode(double x, double y)
 {
@@ -114,15 +123,7 @@ void cohensuther(double x0, double y0, double x1, double y1)
 
 void display()
 {
-	double x0 = 120, y0 = 10, x1 = 40, y1 = 130;
 	glClear(GL_COLOR_BUFFER_BIT);
-	glColor3f(1, 0, 0);
-	glBegin(GL_LINES);
-	glVertex2d(x0, y0);
-	glVertex2d(x1, y1);
-	glVertex2d(60, 20);
-	glVertex2d(80, 120);
-	glEnd();
 
 	glColor3f(0, 0, 1);
 	glBegin(GL_LINE_LOOP);
@@ -131,9 +132,16 @@ void display()
 	glVertex2f(xmax, ymax);
 	glVertex2f(xmin, ymax);
 	glEnd();
+	for (int i = 0; i < n; i++)
+	{
+		glBegin(GL_LINES);
+		glVertex2d(ls[i].x1, ls[i].y1);
+		glVertex2d(ls[i].x2, ls[i].y2);
+		glEnd();
+	}
 
-	cohensuther(x0, y0, x1, y1);
-	cohensuther(60, 20, 80, 120);
+	for (int i = 0; i < n; i++)
+		cohensuther(ls[i].x1, ls[i].y1, ls[i].x2, ls[i].y2);
 
 	glFlush();
 }
@@ -149,6 +157,17 @@ void myinit()
 
 void main(int argc, char** argv)
 {
+	printf("Enter window coordinates (xmin ymin xmax ymax): \n");
+	scanf_s("%lf%lf%lf%lf", &xmin, &ymin, &xmax, &ymax);
+	printf("Enter viewport coordinates (xvmin yvmin xvmax yvmax) :\n");
+	scanf_s("%lf%lf%lf%lf", &xvmin, &yvmin, &xvmax, &yvmax);
+	printf("Enter no. of lines:\n");
+	scanf_s("%d", &n);
+	for (int i = 0; i < n; i++)
+	{
+		printf("Enter line endpoints (x1 y1 x2 y2):\n");
+		scanf_s("%d%d%d%d", &ls[i].x1, &ls[i].y1, &ls[i].x2, &ls[i].y2);
+	}
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
 	glutInitWindowSize(500, 500);
