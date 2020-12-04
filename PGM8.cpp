@@ -1,7 +1,5 @@
-// C++ program for implementing Sutherland�Hodgman 
-// algorithm for polygon clipping 
 #include<iostream>
-#include<GLUT/glut.h>
+#include<GL/glut.h>
 using namespace std;
 int poly_size, poly_points[20][2], org_poly_size, org_poly_points[20][2], clipper_size, clipper_points[20][2];
 const int MAX_POINTS = 20;
@@ -112,6 +110,74 @@ void clip(int poly_points[][2], int& poly_size,
 		poly_points[i][0] = new_points[i][0];
 		poly_points[i][1] = new_points[i][1];
 	}
+}
+
+
+void init() {
+	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glOrtho(0.0, 500.0, 0.0, 500.0, 0.0, 500.0);
+	glClear(GL_COLOR_BUFFER_BIT);
+}
+
+// Implements Sutherland�Hodgman algorithm 
+void display()
+{
+	init();
+	glColor3f(1.0f, 0.0f, 0.0f);
+	drawPoly(clipper_points, clipper_size);
+
+	glColor3f(0.0f, 1.0f, 0.0f);
+	drawPoly(org_poly_points, org_poly_size);
+	//i and k are two consecutive indexes 
+
+	for (int i = 0; i < clipper_size; i++)
+	{
+		int k = (i + 1) % clipper_size;
+
+		// We pass the current array of vertices, it's size 
+		// and the end points of the selected clipper line 
+		clip(poly_points, poly_size, clipper_points[i][0],
+			clipper_points[i][1], clipper_points[k][0],
+			clipper_points[k][1]);
+	}
+
+	glColor3f(0.0f, 0.0f, 1.0f);
+	drawPoly(poly_points, poly_size);
+	glFlush();
+}
+
+//Driver code 
+int main(int argc, char* argv[])
+{
+	printf("Enter no. of vertices: \n");
+	scanf_s("%d", &poly_size);
+	org_poly_size = poly_size;
+	for (int i = 0; i < poly_size; i++)
+	{
+		printf("Polygon Vertex:\n");
+		scanf_s("%d%d", &poly_points[i][0], &poly_points[i][1]);
+		org_poly_points[i][0] = poly_points[i][0];
+		org_poly_points[i][1] = poly_points[i][1];
+	}
+
+	printf("Enter no. of vertices of clipping window:");
+	scanf_s("%d", &clipper_size);
+	for (int i = 0; i < clipper_size; i++)
+	{
+		printf("Clip Vertex:\n");
+		scanf_s("%d%d", &clipper_points[i][0], &clipper_points[i][1]);
+	}
+
+	glutInit(&argc, argv);
+	glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
+	glutInitWindowSize(400, 400);
+	glutInitWindowPosition(100, 100);
+	glutCreateWindow("Polygon Clipping!");
+	glutDisplayFunc(display);
+	glutMainLoop();
+	return 0;
 }
 
 
