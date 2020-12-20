@@ -5,4 +5,6 @@ CLASS 7C<br />
 BATCH C2<br />
 USN 1RV17CS127<br />
 ALL LAB PROGRAMS 1-12 CODE WITH SCREENSHOTS ARE AVAILABLE <br />
-Lab record also added on 07/1/2020
+Lab record added on 07/1/2020<br />
+Part B report
+
